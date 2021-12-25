@@ -88,7 +88,7 @@ function HeaderComponent() {
 
                 <div className="field padding-bottom--24  grid--50-50">
                   <label className='label-m' htmlFor="password">Password</label>
-                  <input type = "text"  name="password"   value={this.state.password} onChange={this.handleChange}
+                  <input type = "password"  name="password"   value={this.state.password} onChange={this.handleChange}
                  /> 
                 </div>
                
