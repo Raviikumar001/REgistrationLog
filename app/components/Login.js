@@ -13,6 +13,7 @@ function HeaderComponent() {
       </div>
     )
   }
+ 
 
 
 
@@ -20,13 +21,17 @@ function HeaderComponent() {
     class  LoginForm extends React.Component {
         constructor(props){
             super(props)
-            this.state = { email:'',name:'', password:'',mobile:'', isSignedUp: false}
+            this.state = { email:'',name:'', password:'',mobile:'', isSignedUp: false, message:''}
+
             this.handleChange = this.handleChange.bind(this)
             this.handleSubmit = this.handleSubmit.bind(this)
+            
           }
           
+      
           handleSubmit(event){
-            const { email, password } = this.state
+            const { email, password, message } = this.state
+            var that = this;
             const user={
                 email:email,
                 password:password
@@ -35,24 +40,43 @@ function HeaderComponent() {
             console.log(user.email)
             console.log(user.password)
             event.preventDefault();
+            let msg= ""
             
             axios.post('https://ttmg-backend.herokuapp.com/api/auth/staffLogin', user)
             .then(function(response) {
                 const status = response.status;
+               msg="You're Login is Correct."
                 //redirect logic
-                if (response.status === 200) {
-                //    window.location = "./components/Login.js"
+                
+                that.setState({ message: msg})
+                if (status === 200) {
+                  
+                  
+                 
 
                 console.log(status)
-                // this.props.history.push('/')
-                alert('You are logged in');
+                
+                // this.setState( { message: msg})
                 
             
                 }
 
              })
-            .catch(error => {
-                alert('Email/Password is missing \nEmail/Password is wrong')
+            .catch((error) => {
+                //err.response.status
+                console.log(error.response.status)
+                  if(error.response.status === 400)
+                  { 
+                     msg = "Email/password is missing"
+                    this.setState( { message: msg})
+                    
+                  }
+                  if(error.response.status === 401)
+                  {
+                     msg = "Email or password is incorrect"
+                    this.setState( { message: msg})
+                  }
+                
               });
           }
   
@@ -67,7 +91,9 @@ function HeaderComponent() {
 
          
  render()
- {
+ {  
+  
+   const {  message } = this.state
     if (this.state.isSignedUp) {
         // redirect to home if signed up
         return <Redirect to = {{ pathname: "/" }} />;
@@ -91,8 +117,13 @@ function HeaderComponent() {
                   <input type = "password"  name="password"   value={this.state.password} onChange={this.handleChange}
                  /> 
                 </div>
+
+                <div className="field padding-bottom--24  grid--50-50">
+               <p>{message}</p>
+              </div>
                
                 
+              
                 <button 
                 className='btn btn-dark'
                 type='submit'
@@ -100,8 +131,7 @@ function HeaderComponent() {
                     Login
                 </button>
                 
-
-       
+                 
 
         </form>
         </div>
@@ -124,6 +154,7 @@ export default class Login extends React.Component{
             <React.Fragment>
              <HeaderComponent />
             <LoginForm />
+            
             </React.Fragment>
         )
     }
