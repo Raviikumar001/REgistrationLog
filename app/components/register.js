@@ -18,13 +18,13 @@ function HeaderComponent() {
     class  LoginForm extends React.Component {
         constructor(props){
             super(props)
-            this.state = { email:'',name:'', password:'',mobile:''}
+            this.state = { email:'',name:'', password:'',mobile:'', message:''}
             this.handleChange = this.handleChange.bind(this)
             this.handleSubmit = this.handleSubmit.bind(this)
           }
           
           handleSubmit(event){
-            const { email, name, password,mobile } = this.state
+            const { email, name, password,mobile, message } = this.state
             const user={
                 email:email,
                 password:password,
@@ -33,24 +33,45 @@ function HeaderComponent() {
             }
         
             event.preventDefault();
+
+            let msg= ""
+            
             
             axios.post('https://ttmg-backend.herokuapp.com/api/auth/staffRegister', user)
             .then(response=>{
-                console.log(response);
-                console.log(response.data);
-                 //This line of code will redirect you once the submission is succeed
-                 if (response.status === 200) {
-                  //    window.location = "./components/Login.js"
-  
-                  
-                  // this.props.history.push('/')
-                  alert('Your account is created');
-                  
+              const status = response.status;
+              console.log(status)
+              msg="Registration is Successful."
+              //redirect logic
               
-                  }
-            }) .catch(error => {
-              alert('Please enter a unique Email\nPlease Fill all the data fields\nMake Sure the phone number is 10Digits.')
-            }) 
+              this.setState({ message: msg})
+              if (status === 200) {
+                
+                
+               
+
+              console.log(status)
+              
+              // this.setState( { message: msg})
+              
+          
+              }
+            }) .catch((error) => {
+              //err.response.status
+              console.log(error.response.status)
+                if(error.response.status === 400)
+                { 
+                   msg = "Some of the fields are missing or incorrect."
+                  this.setState( { message: msg})
+                  
+                }
+                if(error.response.status === 402)
+                {
+                   msg = "User Already Exists with the given Email id."
+                  this.setState( { message: msg})
+                }
+              
+            }); 
           }
   
           handleChange(event)
@@ -62,7 +83,8 @@ function HeaderComponent() {
               )
           }
  render()
- {
+ {     
+       const {  message } = this.state
     
         return (
         <div className='formbg'>
@@ -92,6 +114,8 @@ function HeaderComponent() {
                   <input type = "text"  name="mobile"   value={this.state.mobile} onChange={this.handleChange}
                  />
                 </div>
+
+                 <p> {message}</p>
                 <button 
                 className='btn btn-dark'
                 type='submit'
