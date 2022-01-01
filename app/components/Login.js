@@ -45,7 +45,7 @@ function HeaderComponent() {
             axios.post('https://ttmg-backend.herokuapp.com/api/auth/staffLogin', user)
             .then(function(response) {
                 const status = response.status;
-               msg="You're Login is Correct."
+               msg="You're Login is Successful."
                 //redirect logic
                 
                 that.setState({ message: msg})
@@ -67,7 +67,7 @@ function HeaderComponent() {
                 console.log(error.response.status)
                   if(error.response.status === 400)
                   { 
-                     msg = "Email/password is missing"
+                     msg = "Email or password is missing"
                     this.setState( { message: msg})
                     
                   }
